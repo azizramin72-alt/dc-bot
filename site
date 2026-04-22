@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SERGAJ MAKRO</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:     #04040A;
+  --panel:  #0C0C18;
+  --border: #181830;
+  --accent: #00F0FF;
+  --red:    #FF0A3C;
+  --purple: #8B2FFF;
+  --warn:   #FFB800;
+  --text:   #D0D8F0;
+  --sub:    #3A3A5C;
+  --glow:   0 0 20px rgba(0,240,255,.3);
+  --glow-r: 0 0 20px rgba(255,10,60,.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Share Tech Mono',monospace;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,240,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.018) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;}
+.orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;}
+.o1{width:600px;height:600px;background:var(--purple);top:-250px;left:-200px;opacity:.12;}
+.o2{width:450px;height:450px;background:var(--red);bottom:-180px;right:-150px;opacity:.1;}
+
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:10;transition:opacity .3s;}
+.screen.hidden{opacity:0;pointer-events:none;}
+.card{position:relative;z-index:2;width:460px;animation:fadeUp .4s ease both;}
+
+.logo{text-align:center;margin-bottom:32px;}
+.logo-s{font-family:'Orbitron',monospace;font-size:44px;font-weight:900;letter-spacing:8px;color:var(--accent);text-shadow:var(--glow);line-height:1;}
+.logo-m{font-family:'Orbitron',monospace;font-size:13px;font-weight:700;letter-spacing:10px;color:var(--red);text-shadow:var(--glow-r);margin-top:3px;}
+.logo-t{font-size:9px;letter-spacing:5px;color:var(--sub);margin-top:10px;}
+
+.div{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+.div::before,.div::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);}
+.div span{font-size:9px;letter-spacing:4px;color:var(--sub);white-space:nowrap;}
+
+.box{background:var(--panel);border:1px solid var(--border);padding:32px;position:relative;overflow:hidden;}
+.box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),var(--accent),var(--purple));}
+
+.tabs{display:flex;margin-bottom:28px;border:1px solid var(--border);}
+.tab{flex:1;padding:11px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;border:none;background:transparent;color:var(--sub);cursor:pointer;transition:all .2s;}
+.tab.active{background:rgba(0,240,255,.08);color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent);}
+.tab:hover:not(.active){color:var(--text);}
+
+.fl{font-size:9px;letter-spacing:3px;color:var(--sub);text-transform:uppercase;margin-bottom:8px;}
+.fw{margin-bottom:16px;position:relative;}
+input[type=text],input[type=password],input[type=email],input[type=number],select,textarea{width:100%;background:rgba(0,240,255,.03);border:1px solid var(--border);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:13px;letter-spacing:1px;padding:12px 40px 12px 14px;outline:none;transition:border-color .2s,box-shadow .2s;}
+input::placeholder{color:rgba(0,240,255,.18);font-size:12px;}
+input:focus,select:focus{border-color:rgba(0,240,255,.4);box-shadow:0 0 12px rgba(0,240,255,.1);}
+input.bad{border-color:var(--red)!important;animation:shake .35s ease;}
+.eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--sub);font-size:13px;transition:color .2s;}
+.eye:hover{color:var(--accent);}
+
+.btn-main{width:100%;padding:13px;background:var(--accent);color:#000;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;border:none;cursor:pointer;position:relative;overflow:hidden;transition:box-shadow .2s,transform .1s;}
+.btn-main::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.15);transform:translateX(-100%);transition:transform .3s;}
+.btn-main:hover::before{transform:translateX(0);}
+.btn-main:hover{box-shadow:var(--glow);}
+.btn-main:active{transform:scale(.98);}
+.btn-main:disabled{opacity:.4;cursor:not-allowed;}
+.btn-ghost{width:100%;padding:10px;background:transparent;color:var(--sub);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;border:1px solid var(--border);cursor:pointer;transition:all .2s;margin-top:10px;}
+.btn-ghost:hover{color:var(--text);border-color:var(--sub);}
+
+.msg{font-size:10px;letter-spacing:2px;min-height:16px;margin-bottom:14px;}
+.msg.err{color:var(--red);}
+.msg.ok{color:var(--accent);}
+
+.spin{display:none;width:14px;height:14px;border:2px solid rgba(0,0,0,.3);border-top-color:#000;border-radius:50%;animation:rot .6s linear infinite;margin:0 auto;}
+
+#screen-dash,#screen-admin{align-items:flex-start;overflow-y:auto;padding:0;}
+.dash-wrap{width:100%;min-height:100vh;position:relative;z-index:2;animation:fadeUp .4s ease both;}
+header{border-bottom:1px solid var(--border);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(4,4,10,.95);backdrop-filter:blur(10px);z-index:50;}
+.h-brand{font-family:'Orbitron',monospace;font-size:16px;font-weight:900;letter-spacing:4px;color:var(--accent);text-shadow:var(--glow);}
+.h-brand span{color:var(--red);}
+.h-right{display:flex;align-items:center;gap:16px;font-size:10px;color:var(--sub);}
+.dot-on{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:pulse 2s infinite;}
+.btn-sm{padding:7px 14px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;border:1px solid var(--border);background:transparent;color:var(--sub);cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.btn-sm:hover{color:var(--text);border-color:var(--sub);}
+.dash-content{max-width:860px;margin:0 auto;padding:40px 32px 80px;}
+.sec-title{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.sec-title::before{content:'';width:3px;height:14px;background:var(--accent);box-shadow:0 0 8px var(--accent);}
+
+.key-card{background:var(--panel);border:1px solid var(--border);padding:26px;margin-bottom:22px;position:relative;overflow:hidden;transition:border-color .2s;}
+.key-card:hover{border-color:rgba(0,240,255,.2);}
+.key-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;font-size:9px;letter-spacing:3px;text-transform:uppercase;border:1px solid;}
+.badge-none{color:var(--sub);border-color:var(--border);}
+.badge-active{color:var(--accent);border-color:rgba(0,240,255,.35);background:rgba(0,240,255,.06);}
+.badge-expired{color:var(--red);border-color:rgba(255,10,60,.35);background:rgba(255,10,60,.06);}
+.badge-pro{color:var(--accent);border-color:rgba(0,240,255,.3);background:rgba(0,240,255,.05);}
+.badge-vip{color:var(--purple);border-color:rgba(139,47,255,.35);background:rgba(139,47,255,.06);}
+.badge-trial{color:var(--warn);border-color:rgba(255,184,0,.35);background:rgba(255,184,0,.06);}
+.key-row{display:flex;gap:10px;align-items:center;margin-top:16px;}
+.key-row input{flex:1;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:12px 14px;}
+.btn-verify{padding:12px 22px;background:var(--accent);color:#000;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;letter-spacing:3px;border:none;cursor:pointer;white-space:nowrap;transition:box-shadow .2s,transform .1s;flex-shrink:0;}
+.btn-verify:hover{box-shadow:var(--glow);}
+.btn-verify:disabled{opacity:.4;cursor:not-allowed;}
+.vmsg{font-size:10px;letter-spacing:2px;margin-top:12px;min-height:16px;}
+.vmsg.ok{color:var(--accent);}
+.vmsg.err{color:var(--red);}
+.key-info{margin-top:16px;padding-top:16px;border-top:1px solid var(--border);display:none;grid-template-columns:repeat(3,1fr);gap:12px;}
+.key-info.vis{display:grid;}
+.ki-l{font-size:8px;letter-spacing:3px;color:var(--sub);margin-bottom:4px;text-transform:uppercase;}
+.ki-v{font-size:13px;color:var(--accent);}
+
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.sc{background:var(--panel);border:1px solid var(--border);padding:18px 20px;position:relative;overflow:hidden;}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+.sc-l{font-size:8px;letter-spacing:3px;color:var(--sub);text-transform:uppercase;margin-bottom:8px;}
+.sc-v{font-family:'Orbitron',monospace;font-size:28px;font-weight:700;color:var(--accent);line-height:1;}
+.sc-v.r{color:var(--red);}
+.sc-v.p{color:var(--purple);}
+
+.admin-grid{display:grid;grid-template-columns:290px 1fr;gap:18px;align-items:start;}
+.abox{background:var(--panel);border:1px solid var(--border);padding:22px;}
+
+.tier-row{display:flex;gap:8px;margin-bottom:16px;}
+.tb{flex:1;padding:8px 4px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--border);background:transparent;color:var(--sub);transition:all .2s;text-align:center;}
+.tb.tp{border-color:var(--accent);color:var(--accent);background:rgba(0,240,255,.07);}
+.tb.tv{border-color:var(--purple);color:var(--purple);background:rgba(139,47,255,.07);}
+.tb.tt{border-color:var(--warn);color:var(--warn);background:rgba(255,184,0,.07);}
+
+input[type=number]{padding:10px 13px;}
+select{padding:10px 13px;font-size:11px;}
+select option{background:#0c0c18;color:var(--text);}
+textarea{height:100px;resize:vertical;font-size:11px;line-height:2;padding:10px 13px;}
+
+.gen-btn{width:100%;padding:12px;background:rgba(0,240,255,.1);color:var(--accent);border:1px solid rgba(0,240,255,.25);font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;cursor:pointer;transition:all .2s;margin-top:4px;}
+.gen-btn:hover{background:rgba(0,240,255,.2);box-shadow:var(--glow);}
+.copy-btn{width:100%;padding:8px;background:transparent;color:var(--sub);border:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer;transition:all .2s;margin-top:8px;}
+.copy-btn:hover{color:var(--accent);border-color:rgba(0,240,255,.3);}
+
+.table-bar{display:flex;gap:10px;margin-bottom:14px;align-items:center;}
+.sb{flex:1;background:rgba(0,240,255,.03);border:1px solid var(--border);color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:11px;padding:9px 13px;outline:none;}
+.sb:focus{border-color:rgba(0,240,255,.3);}
+.flt{padding:9px 11px;font-size:10px;}
+.ref{padding:9px 12px;background:transparent;border:1px solid var(--border);color:var(--sub);font-size:14px;cursor:pointer;transition:all .2s;}
+.ref:hover{color:var(--accent);border-color:rgba(0,240,255,.3);}
+
+table{width:100%;border-collapse:collapse;font-size:11px;}
+thead th{font-size:8px;letter-spacing:3px;color:var(--sub);text-transform:uppercase;padding:0 10px 12px;text-align:left;border-bottom:1px solid var(--border);}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.025);transition:background .15s;animation:slideIn .2s ease both;}
+tbody tr:hover{background:rgba(0,240,255,.02);}
+tbody td{padding:11px 10px;vertical-align:middle;}
+.kt{color:var(--accent);letter-spacing:1px;cursor:pointer;font-size:10px;}
+.kt:hover{text-decoration:underline;}
+.act{display:flex;gap:5px;}
+.atb{padding:5px 10px;font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:1px;border:1px solid;cursor:pointer;background:transparent;transition:all .2s;text-transform:uppercase;}
+.atb-ban{color:var(--red);border-color:rgba(255,10,60,.3);}
+.atb-ban:hover{background:rgba(255,10,60,.12);}
+.atb-unb{color:var(--accent);border-color:rgba(0,240,255,.3);}
+.atb-unb:hover{background:rgba(0,240,255,.1);}
+.atb-del{color:var(--sub);border-color:var(--border);}
+.atb-del:hover{color:var(--red);border-color:rgba(255,10,60,.3);}
+.empty-t{text-align:center;padding:50px;color:var(--sub);font-size:10px;letter-spacing:3px;}
+.pager{display:flex;gap:6px;justify-content:flex-end;margin-top:14px;}
+.pg{width:29px;height:29px;display:flex;align-items:center;justify-content:center;font-family:'Share Tech Mono',monospace;font-size:10px;background:transparent;border:1px solid var(--border);color:var(--sub);cursor:pointer;transition:all .2s;}
+.pg:hover,.pg.on{border-color:var(--accent);color:var(--accent);background:rgba(0,240,255,.07);}
+
+#toast{position:fixed;bottom:28px;right:28px;z-index:9999;background:var(--panel);border:1px solid var(--accent);color:var(--accent);padding:12px 20px;font-size:10px;letter-spacing:2px;box-shadow:var(--glow);opacity:0;transform:translateY(14px);transition:all .3s;pointer-events:none;}
+#toast.show{opacity:1;transform:translateY(0);}
+#toast.e{border-color:var(--red);color:var(--red);box-shadow:var(--glow-r);}
+
+.admin-link{margin-top:16px;text-align:center;font-size:9px;color:var(--sub);letter-spacing:2px;}
+.admin-link a{color:var(--sub);text-decoration:none;transition:color .2s;}
+.admin-link a:hover{color:var(--accent);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+
+@media(max-width:700px){
+  .card{width:calc(100vw - 28px);}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .admin-grid{grid-template-columns:1fr;}
+  .dash-content{padding:24px 16px 60px;}
+  header{padding:14px 16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+
+<!-- ══ AUTH SCREEN ════════════════════════════════════════ -->
+<div class="screen" id="screen-auth">
+  <div class="card">
+    <div class="logo">
+      <div class="logo-s">SERGAJ</div>
+      <div class="logo-m">MAKRO</div>
+      <div class="logo-t">Premium Macro Software</div>
+    </div>
+    <div class="div"><span>[ ACCOUNT ACCESS ]</span></div>
+    <div class="box">
+      <div class="tabs">
+        <button class="tab active" id="tab-login" onclick="switchTab('login')">LOGIN</button>
+        <button class="tab" id="tab-reg" onclick="switchTab('register')">REGISTER</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="form-login">
+        <div class="fw">
+          <div class="fl">Username</div>
+          <input type="text" id="l-user" placeholder="username" autocomplete="off"
+            onkeydown="if(event.key==='Enter')document.getElementById('l-pw').focus()"/>
+        </div>
+        <div class="fw">
+          <div class="fl">Password</div>
+          <div style="position:relative;">
+            <input type="password" id="l-pw" placeholder="••••••••"
+              onkeydown="if(event.key==='Enter')doLogin()"/>
+            <button class="eye" onclick="toggleEye('l-pw','eye-l')" id="eye-l">👁</button>
+          </div>
+        </div>
+        <div class="msg err" id="l-err"></div>
+        <button class="btn-main" id="l-btn" onclick="doLogin()">
+          <span id="l-txt">[ LOGIN ]</span>
+          <div class="spin" id="l-spin"></div>
+        </button>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="form-reg" style="display:none;">
+        <div class="fw">
+          <div class="fl">Username</div>
+          <input type="text" id="r-user" placeholder="choose username" autocomplete="off"/>
+        </div>
+        <div class="fw">
+          <div class="fl">Email</div>
+          <input type="email" id="r-email" placeholder="your@email.com"/>
+        </div>
+        <div class="fw">
+          <div class="fl">Password</div>
+          <div style="position:relative;">
+            <input type="password" id="r-pw" placeholder="min. 6 characters"/>
+            <button class="eye" onclick="toggleEye('r-pw','eye-r')" id="eye-r">👁</button>
+          </div>
+        </div>
+        <div class="fw">
+          <div class="fl">Confirm Password</div>
+          <input type="password" id="r-pw2" placeholder="repeat password"
+            onkeydown="if(event.key==='Enter')doRegister()"/>
+        </div>
+        <div class="msg err" id="r-err"></div>
+        <button class="btn-main" id="r-btn" onclick="doRegister()">
+          <span id="r-txt">[ CREATE ACCOUNT ]</span>
+          <div class="spin" id="r-spin"></div>
+        </button>
+      </div>
+    </div>
+    <div class="admin-link"><a href="#" onclick="showScreen('screen-admin-login');return false;">Admin Panel →</a></div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══════════════════════════════════════════ -->
+<div class="screen hidden" id="screen-dash">
+  <div class="dash-wrap">
+    <header>
+      <div class="h-brand">SERGAJ <span>MAKRO</span></div>
+      <div class="h-right">
+        <span><span class="dot-on"></span> ONLINE</span>
+        <span style="color:var(--text);letter-spacing:1px;" id="dash-user"></span>
+        <button class="btn-sm" onclick="logout()">LOGOUT</button>
+      </div>
+    </header>
+    <div class="dash-content">
+
+      <div class="sec-title">License Key</div>
+      <div class="key-card">
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <span class="badge badge-none" id="key-status-badge">NO KEY</span>
+          <span id="key-tier-badge" style="display:none;"></span>
+        </div>
+        <div class="key-row">
+          <input type="text" id="key-input" placeholder="SERGAJ-XXXX-XXXX-XXXX-XXXX"
+            oninput="this.value=this.value.toUpperCase()"
+            onkeydown="if(event.key==='Enter')verifyKey()"/>
+          <button class="btn-verify" id="verify-btn" onclick="verifyKey()">VERIFY</button>
+        </div>
+        <div class="vmsg" id="vmsg"></div>
+        <div class="key-info" id="key-info">
+          <div><div class="ki-l">Tier</div><div class="ki-v" id="ki-tier">—</div></div>
+          <div><div class="ki-l">Status</div><div class="ki-v" id="ki-status">—</div></div>
+          <div><div class="ki-l">Note</div><div class="ki-v" id="ki-note">—</div></div>
+        </div>
+      </div>
+
+      <div class="sec-title" style="margin-top:32px;">Download</div>
+      <div class="key-card" id="dl-card" style="opacity:.35;pointer-events:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-family:'Orbitron',monospace;font-size:14px;font-weight:700;color:var(--accent);margin-bottom:6px;">SERGAJ MAKRO v2.0</div>
+            <div style="font-size:10px;color:var(--sub);letter-spacing:1px;">Requires active license key</div>
+          </div>
+          <button class="btn-verify" onclick="toast('Download gestartet!')">⬇ DOWNLOAD</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN LOGIN ════════════════════════════════════════ -->
+<div class="screen hidden" id="screen-admin-login">
+  <div class="card">
+    <div class="logo">
+      <div class="logo-s" style="font-size:30px;letter-spacing:6px;">ADMIN</div>
+      <div class="logo-m">CONTROL PANEL</div>
+      <div class="logo-t">SERGAJ MAKRO</div>
+    </div>
+    <div class="div"><span>[ ADMINISTRATOR LOGIN ]</span></div>
+    <div class="box">
+      <div class="fw">
+        <div class="fl">Username</div>
+        <input type="text" id="al-user" placeholder="admin" autocomplete="off"
+          onkeydown="if(event.key==='Enter')document.getElementById('al-pw').focus()"/>
+      </div>
+      <div class="fw">
+        <div class="fl">Password</div>
+        <div style="position:relative;">
+          <input type="password" id="al-pw" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+          <button class="eye" onclick="toggleEye('al-pw','eye-al')" id="eye-al">👁</button>
+        </div>
+      </div>
+      <div class="msg err" id="al-err"></div>
+      <button class="btn-main" id="al-btn" onclick="doAdminLogin()">
+        <span id="al-txt">[ LOGIN ]</span>
+        <div class="spin" id="al-spin"></div>
+      </button>
+      <button class="btn-ghost" onclick="showScreen('screen-auth')">← Back to User Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ════════════════════════════════════════ -->
+<div class="screen hidden" id="screen-admin">
+  <div class="dash-wrap">
+    <header>
+      <div class="h-brand">SERGAJ <span>ADMIN</span></div>
+      <div class="h-right">
+        <span><span class="dot-on"></span> ADMIN</span>
+        <span id="aclock"></span>
+        <button class="btn-sm" onclick="adminLogout()">LOGOUT</button>
+      </div>
+    </header>
+    <div class="dash-content">
+
+      <div class="stats-grid">
+        <div class="sc"><div class="sc-l">Total Keys</div><div class="sc-v" id="s-total">—</div></div>
+        <div class="sc"><div class="sc-l">Active</div><div class="sc-v" id="s-active">—</div></div>
+        <div class="sc"><div class="sc-l">Banned</div><div class="sc-v r" id="s-ban">—</div></div>
+        <div class="sc"><div class="sc-l">Total Uses</div><div class="sc-v p" id="s-uses">—</div></div>
+      </div>
+
+      <div class="admin-grid">
+
+        <!-- LEFT -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="abox">
+            <div class="sec-title" style="margin-bottom:18px;">Generate Keys</div>
+            <div class="fl" style="margin-bottom:8px;">Tier</div>
+            <div class="tier-row">
+              <div class="tb tp" data-tier="Pro" onclick="pickTier(this,'tp')">PRO</div>
+              <div class="tb" data-tier="VIP" onclick="pickTier(this,'tv')">VIP</div>
+              <div class="tb" data-tier="Trial" onclick="pickTier(this,'tt')">TRIAL</div>
+            </div>
+            <div style="margin-bottom:14px;">
+              <div class="fl" style="margin-bottom:8px;">Amount</div>
+              <input type="number" id="gen-count" value="1" min="1" max="100" style="padding:10px 13px;"/>
+            </div>
+            <div style="margin-bottom:16px;">
+              <div class="fl" style="margin-bottom:8px;">Note (optional)</div>
+              <input type="text" id="gen-note" placeholder="e.g. Discord giveaway" style="padding:10px 13px;"/>
+            </div>
+            <button class="gen-btn" onclick="genKeys()">⚡ GENERATE</button>
+          </div>
+
+          <div class="abox" id="out-box" style="display:none;">
+            <div class="sec-title" style="margin-bottom:14px;">Generated</div>
+            <textarea id="gen-out" readonly></textarea>
+            <button class="copy-btn" onclick="copyAll()">COPY ALL</button>
+          </div>
+        </div>
+
+        <!-- RIGHT: TABLE -->
+        <div class="abox">
+          <div class="sec-title" style="margin-bottom:16px;">Key Manager</div>
+          <div class="table-bar">
+            <input class="sb" type="text" id="asearch" placeholder="Search key / note..." oninput="renderTable()"/>
+            <select class="flt" id="afst" onchange="renderTable()">
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="banned">Banned</option>
+            </select>
+            <select class="flt" id="aftr" onchange="renderTable()">
+              <option value="all">All Tiers</option>
+              <option value="Pro">Pro</option>
+              <option value="VIP">VIP</option>
+              <option value="Trial">Trial</option>
+            </select>
+            <button class="ref" onclick="loadKeys()">↻</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead><tr>
+                <th>Key</th><th>Tier</th><th>Status</th>
+                <th>Uses</th><th>Note</th><th>Last Seen</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="atbody"></tbody>
+            </table>
+          </div>
+          <div id="aempty" class="empty-t" style="display:none;">NO KEYS FOUND</div>
+          <div class="pager" id="apager"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── API BASE URL ─────────────────────────────────────────
+const API = 'https://dc-bot-production-739a.up.railway.app';
+
+let currentUser = null;
+let adminToken  = '';
+let ALL_KEYS    = [];
+let selTier     = 'Pro';
+let apage       = 1;
+const PER       = 12;
+
+// ── INIT ────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const u = localStorage.getItem('sergaj_user');
+  if (u) { currentUser = JSON.parse(u); loadDashboard(); return; }
+  const a = sessionStorage.getItem('sergaj_admin');
+  if (a) { adminToken = a; loadAdminPanel(); return; }
+  showScreen('screen-auth');
+});
+
+// ── SCREENS ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('hidden', s.id !== id));
+}
+
+// ── TABS ────────────────────────────────────────────────
+function switchTab(t) {
+  document.getElementById('tab-login').classList.toggle('active', t==='login');
+  document.getElementById('tab-reg').classList.toggle('active', t==='register');
+  document.getElementById('form-login').style.display = t==='login' ? 'block' : 'none';
+  document.getElementById('form-reg').style.display   = t==='register' ? 'block' : 'none';
+}
+
+function toggleEye(iid, bid) {
+  const i=document.getElementById(iid), b=document.getElementById(bid);
+  i.type = i.type==='password' ? 'text' : 'password';
+  b.textContent = i.type==='password' ? '👁' : '🙈';
+}
+
+// ── USER STORE ───────────────────────────────────────────
+function getUsers() { return JSON.parse(localStorage.getItem('sergaj_users')||'{}'); }
+function saveUsers(u) { localStorage.setItem('sergaj_users', JSON.stringify(u)); }
+function hashStr(s) { let h=0; for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;} return h.toString(36); }
+
+// ── LOGIN ────────────────────────────────────────────────
+async function doLogin() {
+  const u=v('l-user'), p=v('l-pw'), err=el('l-err');
+  err.textContent='';
+  if(!u||!p){err.textContent='// FILL ALL FIELDS';return;}
+  setLoad('l-btn','l-txt','l-spin',true);
+  await wait(500);
+  const users=getUsers();
+  if(!users[u]){
+    err.textContent='// ACCOUNT NOT FOUND';
+    bad('l-user');
+  } else if(users[u].pw !== hashStr(p)){
+    err.textContent='// WRONG PASSWORD';
+    bad('l-pw');
+  } else {
+    currentUser={username:u,...users[u]};
+    localStorage.setItem('sergaj_user',JSON.stringify(currentUser));
+    setLoad('l-btn','l-txt','l-spin',false);
+    loadDashboard(); return;
+  }
+  setLoad('l-btn','l-txt','l-spin',false);
+}
+
+// ── REGISTER ─────────────────────────────────────────────
+async function doRegister() {
+  const u=v('r-user'), em=v('r-email'), p=v('r-pw'), p2=v('r-pw2'), err=el('r-err');
+  err.textContent='';
+  if(!u||!em||!p||!p2){err.textContent='// FILL ALL FIELDS';return;}
+  if(p.length<6){err.textContent='// PASSWORD TOO SHORT (min. 6)';return;}
+  if(p!==p2){err.textContent='// PASSWORDS DO NOT MATCH';return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){err.textContent='// INVALID EMAIL';return;}
+  setLoad('r-btn','r-txt','r-spin',true);
+  await wait(600);
+  const users=getUsers();
+  if(users[u]){err.textContent='// USERNAME ALREADY TAKEN';setLoad('r-btn','r-txt','r-spin',false);return;}
+  users[u]={pw:hashStr(p),email:em,activeKey:null,tier:null,created:new Date().toISOString()};
+  saveUsers(users);
+  currentUser={username:u,...users[u]};
+  localStorage.setItem('sergaj_user',JSON.stringify(currentUser));
+  setLoad('r-btn','r-txt','r-spin',false);
+  toast('Account created!');
+  loadDashboard();
+}
+
+function logout() {
+  localStorage.removeItem('sergaj_user');
+  currentUser=null;
+  showScreen('screen-auth');
+}
+
+// ── DASHBOARD ────────────────────────────────────────────
+function loadDashboard() {
+  showScreen('screen-dash');
+  el('dash-user').textContent = currentUser.username.toUpperCase();
+  if(currentUser.activeKey){
+    el('key-input').value = currentUser.activeKey;
+    showKeySuccess(currentUser.tier||'Pro', currentUser.activeKey);
+  }
+}
+
+// ── VERIFY KEY (mit Callback-Support) ────────────────────
+async function verifyKey() {
+  const key = el('key-input').value.trim().toUpperCase();
+  const msg = el('vmsg'), btn = el('verify-btn');
+  msg.textContent = '';
+  if (!key) { msg.textContent = '// ENTER YOUR KEY'; msg.className = 'vmsg err'; return; }
+  btn.disabled = true; btn.textContent = '...';
+  msg.className = 'vmsg'; msg.textContent = '// VALIDATING...';
+  try {
+    const r = await fetch(`${API}/api/validate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key })
+    });
+    const d = await r.json();
+    if (d.valid) {
+      // Key in lokalen User speichern
+      const users = getUsers();
+      if (users[currentUser.username]) {
+        users[currentUser.username].activeKey = key;
+        users[currentUser.username].tier = d.tier;
+        saveUsers(users);
+        currentUser.activeKey = key;
+        currentUser.tier = d.tier;
+        localStorage.setItem('sergaj_user', JSON.stringify(currentUser));
+      }
+      showKeySuccess(d.tier || 'Pro', key);
+      msg.textContent = '// KEY VERIFIED — ACCESS GRANTED';
+      msg.className = 'vmsg ok';
+      toast('Key activated!');
+
+      // ── Callback-Redirect (z.B. von Discord-Bot) ──────────
+      const params = new URLSearchParams(window.location.search);
+      const callbackUrl = params.get('callback');
+      if (callbackUrl) {
+        setTimeout(() => {
+          try {
+            const redirect = new URL(callbackUrl);
+            redirect.searchParams.set('token',    currentUser.token    || '');
+            redirect.searchParams.set('username', currentUser.username || '');
+            redirect.searchParams.set('tier',     d.tier               || 'Pro');
+            redirect.searchParams.set('key',      key);
+            window.location.href = redirect.toString();
+          } catch (urlErr) {
+            console.error('Invalid callback URL:', urlErr);
+          }
+        }, 1200);
+      }
+      // ──────────────────────────────────────────────────────
+    } else {
+      msg.textContent = '// INVALID OR BANNED KEY';
+      msg.className = 'vmsg err';
+      bad('key-input');
+    }
+  } catch(e) {
+    msg.textContent = '// SERVER ERROR — TRY AGAIN';
+    msg.className = 'vmsg err';
+  } finally {
+    btn.disabled = false; btn.textContent = 'VERIFY';
+  }
+}
+
+function showKeySuccess(tier, key) {
+  el('key-status-badge').className='badge badge-active';
+  el('key-status-badge').textContent='ACTIVE';
+  const tb=el('key-tier-badge');
+  tb.style.display='inline-flex';
+  const tc={Pro:'badge-pro',VIP:'badge-vip',Trial:'badge-trial'}[tier]||'badge-pro';
+  tb.className=`badge ${tc}`; tb.textContent=tier;
+  el('ki-tier').textContent=tier;
+  el('ki-status').textContent='ACTIVE';
+  el('ki-note').textContent=key.substring(0,14)+'...';
+  el('key-info').classList.add('vis');
+  const dc=el('dl-card'); dc.style.opacity='1'; dc.style.pointerEvents='auto';
+}
+
+// ── ADMIN LOGIN ──────────────────────────────────────────
+async function doAdminLogin() {
+  const u=v('al-user'), p=v('al-pw'), err=el('al-err');
+  err.textContent='';
+  if(!u||!p){err.textContent='// FILL ALL FIELDS';return;}
+  setLoad('al-btn','al-txt','al-spin',true);
+  try {
+    const r=await fetch(`${API}/api/admin/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+    const d=await r.json();
+    if(d.token){
+      adminToken=d.token;
+      sessionStorage.setItem('sergaj_admin',adminToken);
+      setLoad('al-btn','al-txt','al-spin',false);
+      loadAdminPanel();
+    } else {
+      err.textContent='// ACCESS DENIED';
+      bad('al-pw');
+      setLoad('al-btn','al-txt','al-spin',false);
+    }
+  } catch(e){
+    err.textContent='// SERVER ERROR';
+    setLoad('al-btn','al-txt','al-spin',false);
+  }
+}
+
+function adminLogout() {
+  adminToken=''; sessionStorage.removeItem('sergaj_admin');
+  showScreen('screen-auth');
+}
+
+// ── ADMIN PANEL ──────────────────────────────────────────
+function loadAdminPanel() {
+  showScreen('screen-admin');
+  loadStats(); loadKeys();
+  const cl=el('aclock');
+  const t=()=>cl.textContent=new Date().toLocaleTimeString('de-DE');
+  t(); setInterval(t,1000);
+}
+
+async function loadStats() {
+  const d=await apiReq('/api/admin/stats'); if(!d)return;
+  el('s-total').textContent=d.total; el('s-active').textContent=d.active;
+  el('s-ban').textContent=d.inactive; el('s-uses').textContent=d.total_uses;
+}
+
+async function loadKeys() {
+  const d=await apiReq('/api/admin/keys'); if(!d)return;
+  ALL_KEYS=d; renderTable();
+}
+
+function renderTable() {
+  const q=el('asearch').value.toLowerCase();
+  const fs=el('afst').value, ft=el('aftr').value;
+  let list=ALL_KEYS.filter(k=>{
+    const ms=k.key.toLowerCase().includes(q)||k.note.toLowerCase().includes(q);
+    const mst=fs==='all'?true:fs==='active'?k.active:!k.active;
+    const mt=ft==='all'?true:k.tier===ft;
+    return ms&&mst&&mt;
+  });
+  const pages=Math.max(1,Math.ceil(list.length/PER));
+  if(apage>pages)apage=1;
+  const slice=list.slice((apage-1)*PER,apage*PER);
+  const tb=el('atbody'); tb.innerHTML='';
+  el('aempty').style.display=slice.length?'none':'block';
+  slice.forEach((k,i)=>{
+    const tr=document.createElement('tr');
+    tr.style.animationDelay=`${i*0.025}s`;
+    const tc={Pro:'badge-pro',VIP:'badge-vip',Trial:'badge-trial'}[k.tier]||'badge-pro';
+    tr.innerHTML=`
+      <td class="kt" onclick="cpKey('${k.key}')" title="Copy">${k.key}</td>
+      <td><span class="badge ${tc}">${k.tier}</span></td>
+      <td><span class="badge ${k.active?'badge-active':'badge-expired'}">${k.active?'ACTIVE':'BANNED'}</span></td>
+      <td style="color:var(--sub)">${k.uses}</td>
+      <td style="color:var(--sub);font-size:10px;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${k.note||'—'}</td>
+      <td style="color:var(--sub);font-size:9px">${fmtDate(k.last_seen)}</td>
+      <td><div class="act">
+        <button class="atb ${k.active?'atb-ban':'atb-unb'}" onclick="toggleKey('${k.key}')">${k.active?'BAN':'UNBAN'}</button>
+        <button class="atb atb-del" onclick="delKey('${k.key}')">DEL</button>
+      </div></td>`;
+    tb.appendChild(tr);
+  });
+  const pg=el('apager'); pg.innerHTML='';
+  for(let i=1;i<=pages;i++){
+    const b=document.createElement('button');
+    b.className='pg'+(i===apage?' on':''); b.textContent=i;
+    b.onclick=()=>{apage=i;renderTable();}; pg.appendChild(b);
+  }
+}
+
+function fmtDate(s){
+  if(!s||s==='Never')return'Never';
+  try{const d=new Date(s);return d.toLocaleDateString('de-DE')+' '+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});}catch{return s;}
+}
+
+function pickTier(e,c){document.querySelectorAll('.tb').forEach(b=>b.className='tb');e.className=`tb ${c}`;selTier=e.dataset.tier;}
+
+async function genKeys(){
+  const count=Math.min(parseInt(el('gen-count').value)||1,100);
+  const note=el('gen-note').value;
+  const d=await apiReq('/api/admin/keys/generate','POST',{tier:selTier,count,note});
+  if(!d)return;
+  el('gen-out').value=d.generated.join('\n');
+  el('out-box').style.display='block';
+  toast(`${d.generated.length} key(s) generated`);
+  loadKeys(); loadStats();
+}
+
+function copyAll(){navigator.clipboard.writeText(el('gen-out').value);toast('Copied!');}
+function cpKey(k){navigator.clipboard.writeText(k);toast('Key copied');}
+
+async function toggleKey(key){
+  const d=await apiReq(`/api/admin/keys/${encodeURIComponent(key)}/toggle`,'POST');
+  if(!d)return;
+  const k=ALL_KEYS.find(x=>x.key===key); if(k)k.active=d.active;
+  renderTable(); loadStats();
+  toast(d.active?'Key activated':'Key banned',!d.active);
+}
+
+async function delKey(key){
+  if(!confirm(`Delete ${key}?`))return;
+  const d=await apiReq(`/api/admin/keys/${encodeURIComponent(key)}`,'DELETE');
+  if(!d)return;
+  ALL_KEYS=ALL_KEYS.filter(x=>x.key!==key);
+  renderTable(); loadStats(); toast('Key deleted',true);
+}
+
+async function apiReq(path,method='GET',body=null){
+  try{
+    const opts={method,headers:{'Content-Type':'application/json','X-Admin-Token':adminToken}};
+    if(body)opts.body=JSON.stringify(body);
+    const r=await fetch(API+path,opts);
+    if(r.status===401){adminLogout();return null;}
+    return await r.json();
+  }catch(e){toast('Connection error',true);return null;}
+}
+
+// ── HELPERS ──────────────────────────────────────────────
+const el=id=>document.getElementById(id);
+const v=id=>el(id).value.trim();
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function bad(id){const i=el(id);i.classList.add('bad');setTimeout(()=>i.classList.remove('bad'),500);}
+function setLoad(bid,tid,sid,on){el(bid).disabled=on;el(tid).style.display=on?'none':'block';el(sid).style.display=on?'block':'none';}
+
+let _tt;
+function toast(msg,err=false){
+  const e=el('toast');
+  e.textContent='// '+msg.toUpperCase();
+  e.className='show'+(err?' e':'');
+  clearTimeout(_tt); _tt=setTimeout(()=>e.className='',2500);
+}
+</script>
+</body>
+</html>
